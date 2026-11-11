@@ -114,4 +114,25 @@ window.onkeydown = ( event ) => {
     }
 }
 
+Events.on(engine, "collisionStart", (event) => {
+    event.paise.forEach((collision) => {
+        const index = collision.bodyA.index;
+
+        if(collision.bodyA.index == collision.bodyB.index) {
+            World.remove(world, [collision.bodyA, collision.bodyB])
+            const newFruit = FRUITS[index + 1];
+            const newBody = Bodies.circle(
+            collision.collision.supports[0].x,
+            collision.collision.supports[0].y,
+            newFruit.radius,
+            {
+                index : index + 1,
+                render : {sprite: { texture: `${newFruit.name}.png`}}
+            }
+        )
+        World.add(world, newBody);  
+        }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+    })
+});
+
 addFruit();
