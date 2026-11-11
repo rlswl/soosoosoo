@@ -5,7 +5,8 @@ import { FRUITS } from "/1/fruits.js"
         Render = Matter.Render ,
         Runner = Matter.Runner ,
         Bodies = Matter.Bodies ,
-        World = Matter.World;
+        World = Matter.World,
+        Body = Matter.Body;
 
     const engine = Engine.create();
 
@@ -59,9 +60,10 @@ Runner.run(engine);
 
 let currentBody = null;
 let currentFruit = null;
+let disableAction = false;
 
 function addFruit(){
-    const index = Math.floor(math.random() * 5);
+    const index = Math.floor(Math.random() * 5);
     const fruit = FRUITS[index];
 
     const body = Bodies.circle(300, 50, fruit.radius, {
@@ -76,6 +78,40 @@ function addFruit(){
     currentBody = body;
     currentFruit = fruit;
 
+    //월드에 추가
     World.add(world, body)
 }
+
+//키보드 입력받기
+window.onkeydown = ( event ) => { 
+    if(disableAction)
+        return;
+    
+    
+    switch(event.code) {
+        case "KeyA":
+            Body.setPosition(currentBody, {
+                x: currentBody.position.x - 10,
+                y: currentBody.position.y
+            });
+            break;
+        case "KeyD":
+            Body.setPosition(currentBody, {
+                x: currentBody.position.x + 10,
+                y: currentBody.position.y
+            });
+            break;
+        //과일 떨어뜨리기
+        case "KeyS":
+            currentBody.isSleeping = false;
+            disableAction = true;
+
+            setTimeout(() => {
+                addFruit();
+                disableAction = false;
+            }, 1000);
+            break;
+    }
+}
+
 addFruit();
