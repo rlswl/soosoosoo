@@ -6,7 +6,8 @@ import { FRUITS } from "/1/fruits.js"
         Runner = Matter.Runner ,
         Bodies = Matter.Bodies ,
         World = Matter.World,
-        Body = Matter.Body;
+        Body = Matter.Body,
+        Events = Matter.Events;
 
     const engine = Engine.create();
 
@@ -46,6 +47,7 @@ const groundwall = Bodies.rectangle(310, 820, 620, 60, {
 
 const topline = Bodies.rectangle(310, 150, 620, 2, {
                                     //x중심점, y중심점, x길이, y길이
+    name : "topline",                                
     isStatic: true, //고정해주는 기능
     isSensor: true,
     render: {fillStyle: '#E6B143'}                                    
@@ -90,16 +92,20 @@ window.onkeydown = ( event ) => {
     
     switch(event.code) {
         case "KeyA":
-            Body.setPosition(currentBody, {
-                x: currentBody.position.x - 10,
-                y: currentBody.position.y
-            });
+            if(currentBody.position.x - currentFruit.radius > 30){
+                Body.setPosition(currentBody, {
+                    x: currentBody.position.x - 10,
+                    y: currentBody.position.y
+                });
+            }               
             break;
         case "KeyD":
-            Body.setPosition(currentBody, {
-                x: currentBody.position.x + 10,
-                y: currentBody.position.y
-            });
+            if(currentBody.position.x + currentFruit.radius > 550){
+                Body.setPosition(currentBody, {
+                    x: currentBody.position.x - 10,
+                    y: currentBody.position.y
+                });
+            } 
             break;
         //과일 떨어뜨리기
         case "KeyS":
@@ -118,6 +124,9 @@ Events.on(engine, "collisionStart", (event) => {
     event.paise.forEach((collision) => {
         const index = collision.bodyA.index;
 
+        if( index === FRUITS.length - 1 )
+            return;
+
         if(collision.bodyA.index == collision.bodyB.index) {
             World.remove(world, [collision.bodyA, collision.bodyB])
             const newFruit = FRUITS[index + 1];
@@ -131,7 +140,11 @@ Events.on(engine, "collisionStart", (event) => {
             }
         )
         World.add(world, newBody);  
-        }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+        }
+        
+        if( !disableAction && (collision.bodyA.name === "topline" || collision.bodyB.name === "topline")){
+            alert("Game Over");
+        }
     })
 });
 
